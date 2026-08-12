@@ -10,6 +10,8 @@ Colorfile needs to be added to the main file. Can also be used with a terminal s
 Only on German eng version will follow soon:)
 
 #### Short Preview:
+https://github.com/user-attachments/assets/a536b187-831d-43d3-af4d-bad92a07cbb8
+
 
 
 
