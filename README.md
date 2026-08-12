@@ -7,6 +7,9 @@ A small markdown creator written in python. It is supposed to be lightweight (ye
 
 ## Notice:
 Colorfile needs to be added to the main file. Can also be used with a terminal shortcut.
+Only on German eng version will follow soon:)
+
+#### Short Preview:
 
 https://github.com/user-attachments/assets/589e439b-99d9-4bbe-a3cc-b7452afbab72
 
