@@ -11,6 +11,6 @@ Only on German eng version will follow soon:)
 
 #### Short Preview:
 
-https://github.com/user-attachments/assets/589e439b-99d9-4bbe-a3cc-b7452afbab72
+
 
 
