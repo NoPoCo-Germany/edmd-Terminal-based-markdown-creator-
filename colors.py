@@ -1,5 +1,6 @@
 # Can be changed to your likings:)
 # Note that this file was created to a huge portion by ai not all colors are used
+# https://sentry.io/answers/print-colored-text-to-terminal-with-python/#the-solution
 
 BLACK = '\033[30m'
 RED = '\033[31m'
