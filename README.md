@@ -8,7 +8,8 @@ A small markdown creator written in python. It is supposed to be lightweight (ye
 ## Notice:
 Colorfile needs to be added to the main file. Can also be used with a terminal shortcut.
 Only on German eng version will follow soon:)
-Also deadline does not work on win11.
+
+Also deadline does not work on win11. So it does only work on Mac/Linux at the moment
 
 #### Short Preview:
 https://github.com/user-attachments/assets/a536b187-831d-43d3-af4d-bad92a07cbb8
