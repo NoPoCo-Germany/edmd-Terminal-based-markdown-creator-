@@ -45,17 +45,20 @@ try:
         pfad = json.load(f)
 except FileNotFoundError:
     if warning_status == 0:
-        print(colors.WARNING_COLOR + "Kein Pfad gefunden, normaler Pfad wird genutzt." + colors.RESET)
+        print(colors.WARNING_COLOR +
+              "Kein Pfad gefunden, normaler Pfad wird genutzt." + colors.RESET)
     pfad = programm_ordner
 except json.JSONDecodeError:
     if warning_status == 0:
-        print(colors.ERROR_COLOR + "Fehlerhafter Pfad in JSon-Datei, normaler Pfad wird genutzt." + colors.RESET)
+        print(colors.ERROR_COLOR +
+              "Fehlerhafter Pfad in JSon-Datei, normaler Pfad wird genutzt." + colors.RESET)
     pfad = programm_ordner
 
 
 while True:
     number_zeilen = len(zeilen) + 1
-    zeile = input(colors.LINE_NUMBER_COLOR + str(number_zeilen) + colors.RESET + colors.PROMPT_COLOR + "> " + colors.RESET)
+    zeile = input(colors.LINE_NUMBER_COLOR + str(number_zeilen) +
+                  colors.RESET + colors.PROMPT_COLOR + "> " + colors.RESET)
 
     if zeile == ":help":
         print(f'''\n\n{colors.INFO_COLOR}Aktuelle Commands:{colors.RESET}
@@ -85,13 +88,15 @@ while True:
             if input(colors.WARNING_COLOR + "Die Datei existiert bereits. Trotzdem sichern? (y/n): " + colors.RESET).strip().lower() == "y":
                 pass
             else:
-                print(colors.INFO_COLOR + "Der Vorgang wurde abgebrochen." + colors.RESET)
+                print(colors.INFO_COLOR +
+                      "Der Vorgang wurde abgebrochen." + colors.RESET)
                 continue
 
         with open(dateiname, "w", encoding="utf-8") as datei:
             datei.write("\n".join(zeilen))
 
-        print(colors.SUCCESS_COLOR + "Die Datei wurde erfolgreich gespeichert." + colors.RESET)
+        print(colors.SUCCESS_COLOR +
+              "Die Datei wurde erfolgreich gespeichert." + colors.RESET)
         continue
 
     if zeile == ":exit":
@@ -110,18 +115,19 @@ while True:
             continue
 
     if zeile == ":open":
-        file_open_pfad = input(colors.PROMPT_COLOR + "Bitte den Pfad zum öffnen eingeben: " + colors.RESET)
+        file_open_pfad = input(
+            colors.PROMPT_COLOR + "Bitte den Pfad zum öffnen eingeben: " + colors.RESET).strip()
 
         if (file_open_pfad.startswith("'") and file_open_pfad.endswith("'")) or (
-        file_open_pfad.startswith('"') and file_open_pfad.endswith('"')):
+                file_open_pfad.startswith('"') and file_open_pfad.endswith('"')):
             file_open_pfad = file_open_pfad[1:-1]
 
-        if os.path.isfile(file_open_pfad) and os.path.exists(file_open_pfad):
+        if os.path.isfile(file_open_pfad):
             pass
         else:
             if warning_status == 0:
                 print(
-                    colors.ERROR_COLOR + "Es handelt sich nicht um einen validen Ordner oder er existiert nicht." + colors.RESET)
+                    colors.ERROR_COLOR + "Es handelt sich nicht um eine gültige Datei oder der Pfad existiert nicht." + colors.RESET)
                 continue
 
         if input(colors.WARNING_COLOR + "Möchtest du die Datei bearbeiten. (Wird zu deinen aktuellen Zeilen hinzugefügt, neues Dokument dafür empfohlen.) (y/n)" + colors.RESET).strip().lower() == "y":
@@ -133,13 +139,28 @@ while True:
             with open(file_open_pfad, "r", encoding="utf-8") as f:
                 which_list_for_open.extend(f.read().splitlines())
                 for nummer, inhalt in enumerate(which_list_for_open, start=1):
-                    print(f"{colors.LINE_NUMBER_COLOR}{nummer}{colors.RESET}{colors.PROMPT_COLOR}> {colors.RESET}{inhalt}")
+                    print(
+                        f"{colors.LINE_NUMBER_COLOR}{nummer}{colors.RESET}{colors.PROMPT_COLOR}> {colors.RESET}{inhalt}")
                 zeilen_for_open = []
-                print(colors.INFO_COLOR + "Hier kannst du weiter Arbeiten:)" + colors.RESET)
+                if which_list_for_open == zeilen:
+                    print(colors.INFO_COLOR +
+                        "Hier kannst du weiter Arbeiten:)" + colors.RESET)
+                else:
+                    print(colors.INFO_COLOR +
+                        "Datei erfolgreich zum Anschauen geöffnet." + colors.RESET)
                 continue
         except FileNotFoundError:
             if warning_status == 0:
-                print(colors.ERROR_COLOR + "Die Datei existiert nicht oder der Pfad ist Falsch." + colors.RESET)
+                print(colors.ERROR_COLOR +
+                      "Die Datei existiert nicht oder der Pfad ist Falsch." + colors.RESET)
+        except PermissionError:
+            if warning_status == 0:
+                print(colors.ERROR_COLOR +
+                      "Die Datei kann nicht geöffnet werden, da die Berechtigungen fehlen." + colors.RESET)
+        except UnicodeDecodeError:
+            if warning_status == 0:
+                print(colors.ERROR_COLOR +
+                      "Die Datei kann nicht geöffnet werden, da sie nicht im UTF-8 Format ist." + colors.RESET)
             continue
 
     if zeile == ":edit":
@@ -148,16 +169,23 @@ while True:
                 input(colors.PROMPT_COLOR + "Welche zeile soll geändert werden: " + colors.RESET))
         except:
             if warning_status == 0:
-                print(colors.ERROR_COLOR + "Die Eingabe ist nicht erlaubt. Muss sich um eine Nummer handeln." + colors.RESET)
+                print(colors.ERROR_COLOR +
+                      "Die Eingabe ist nicht erlaubt. Muss sich um eine Nummer handeln." + colors.RESET)
             continue
 
         if which_zeile_to_edit < 1 or which_zeile_to_edit > len(zeilen):
             if warning_status == 0:
-                print(colors.ERROR_COLOR + "Darf nicht länger als die Zeilen sein und/oder kleiner als 1." + colors.RESET)
+                print(colors.ERROR_COLOR +
+                      "Darf nicht länger als die Zeilen sein und/oder kleiner als 1." + colors.RESET)
             continue
 
         which_zeile_to_edit = which_zeile_to_edit - 1
-        new_content = input(colors.PROMPT_COLOR + "Was soll in die Zeile: " + colors.RESET)
+        alter_inhalt = zeilen[which_zeile_to_edit]
+
+        readline.add_history(alter_inhalt)
+        new_content = input(colors.PROMPT_COLOR +
+                                "Was soll in die Zeile: " + colors.RESET)
+
         zeilen[which_zeile_to_edit] = new_content
         print(colors.SUCCESS_COLOR + "Zeile wurde gespeichert:)" + colors.RESET)
         continue
@@ -168,18 +196,21 @@ while True:
                 input(colors.PROMPT_COLOR + "Welche zeile soll gelöscht werden: " + colors.RESET))
         except:
             if warning_status == 0:
-                print(colors.ERROR_COLOR + "Die Eingabe ist nicht erlaubt. Muss sich um eine Nummer handeln." + colors.RESET)
+                print(colors.ERROR_COLOR +
+                      "Die Eingabe ist nicht erlaubt. Muss sich um eine Nummer handeln." + colors.RESET)
             continue
 
         if which_zeile_to_delete < 1 or which_zeile_to_delete > len(zeilen):
             if warning_status == 0:
-                print(colors.ERROR_COLOR + "Darf nicht länger als die Zeilen sein und/oder kleiner als 1." + colors.RESET)
+                print(colors.ERROR_COLOR +
+                      "Darf nicht länger als die Zeilen sein und/oder kleiner als 1." + colors.RESET)
             continue
 
         which_zeile_to_delete = which_zeile_to_delete - 1
         if input(colors.WARNING_COLOR + "Wollen sie die Zeile wirklich löschen? (y/n): " + colors.RESET).strip().lower() == "y":
             zeilen.pop(which_zeile_to_delete)
-            print(colors.SUCCESS_COLOR + f"Die Zeile {which_zeile_to_delete + 1} wurde gelöscht:)" + colors.RESET)
+            print(colors.SUCCESS_COLOR +
+                  f"Die Zeile {which_zeile_to_delete + 1} wurde gelöscht:)" + colors.RESET)
             continue
         else:
             print("")
@@ -187,14 +218,15 @@ while True:
 
     if zeile == ":show":
         for nummer, inhalt in enumerate(zeilen, start=1):
-            print(f"{colors.LINE_NUMBER_COLOR}{nummer}{colors.RESET}{colors.PROMPT_COLOR}> {colors.RESET}{inhalt}")
+            print(
+                f"{colors.LINE_NUMBER_COLOR}{nummer}{colors.RESET}{colors.PROMPT_COLOR}> {colors.RESET}{inhalt}")
         continue
 
     if zeile == ":pfad":
         pfad = input(colors.PROMPT_COLOR + "Pfad eingeben:" + colors.RESET)
 
         if (pfad.startswith("'") and pfad.endswith("'")) or (
-        pfad.startswith('"') and pfad.endswith('"')):
+                pfad.startswith('"') and pfad.endswith('"')):
             pfad = pfad[1:-1]
 
         if os.path.isdir(pfad):
@@ -204,7 +236,8 @@ while True:
             continue
         else:
             if warning_status == 0:
-                print(colors.ERROR_COLOR + "Der Pfad ist Ungültig (:help für Problemlösung)" + colors.RESET)
+                print(colors.ERROR_COLOR +
+                      "Der Pfad ist Ungültig (:help für Problemlösung)" + colors.RESET)
             continue
 
     if zeile == ":warnings":
@@ -214,5 +247,10 @@ while True:
         else:
             warning_status = 0
         continue
+
+    if zeile == ":insert":
+        pass
+
+    zeilen.append(zeile)
 
     zeilen.append(zeile)
