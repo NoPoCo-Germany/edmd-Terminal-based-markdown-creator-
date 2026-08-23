@@ -10,6 +10,7 @@ Colorfile needs to be added to the main file. Can also be used with a terminal s
 Only on German eng version will follow soon:)
 
 #### You will need to download (https://github.com/prompt-toolkit/python-prompt-toolkit) it can be easily done with pip install prompt_toolkit
+##### School starts soon and im doing ABI (Germany) right now some s**t that gonna decide what im gonna do in the future so updates will slow down
 
 ## Short Preview:
 https://github.com/user-attachments/assets/a536b187-831d-43d3-af4d-bad92a07cbb8
