@@ -4,7 +4,8 @@ import shutil
 import os
 import json
 import colors
-import readline
+from prompt_toolkit import prompt
+from prompt_toolkit.formatted_text import ANSI
 
 zeilen = []
 zeilen_for_open = []
@@ -182,9 +183,14 @@ while True:
         which_zeile_to_edit = which_zeile_to_edit - 1
         alter_inhalt = zeilen[which_zeile_to_edit]
 
-        readline.add_history(alter_inhalt)
-        new_content = input(colors.PROMPT_COLOR +
-                                "Was soll in die Zeile: " + colors.RESET)
+        new_content = prompt(
+            ANSI(
+                colors.PROMPT_COLOR
+                + "Was soll in die Zeile: "
+                + colors.RESET
+            ),
+            default=alter_inhalt
+        )
 
         zeilen[which_zeile_to_edit] = new_content
         print(colors.SUCCESS_COLOR + "Zeile wurde gespeichert:)" + colors.RESET)
@@ -250,7 +256,5 @@ while True:
 
     if zeile == ":insert":
         pass
-
-    zeilen.append(zeile)
 
     zeilen.append(zeile)
