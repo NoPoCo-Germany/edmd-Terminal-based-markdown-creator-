@@ -7,6 +7,9 @@ import colors
 from prompt_toolkit import prompt
 from prompt_toolkit.formatted_text import ANSI
 
+theme = "default"
+colors.set_theme(theme)
+
 zeilen = []
 zeilen_for_open = []
 columns = shutil.get_terminal_size().columns
@@ -30,7 +33,6 @@ for line in Logo.splitlines():
     print(colors.LOGO_COLOR + line.center(columns) + colors.RESET)
 
 time.sleep(0.5)
-
 
 print(colors.INFO_COLOR + "[Use :help to see all commands]" + colors.RESET)
 
@@ -247,14 +249,38 @@ while True:
             continue
 
     if zeile == ":warnings":
-        print(colors.WARNING_COLOR + "Selten empfohlen!" + colors.RESET)
-        if input(colors.WARNING_COLOR + "Möchten sie Fehlermeldungen ausstellen? (y/n)" + colors.RESET).strip().lower() == "y":
+        if warning_status == 0:
+            print(colors.WARNING_COLOR + "Selten empfohlen!" + colors.RESET)
+            continue
+
+        if input(colors.WARNING_COLOR + "Möchten sie Fehlermeldungen, für diese Sitzung, ausstellen? (y/n)" + colors.RESET).strip().lower() == "y":
             warning_status = 1
         else:
             warning_status = 0
         continue
 
     if zeile == ":insert":
-        pass
+        if warning_status == 0:
+            print(colors.WARNING_COLOR + "Die Zeile wird eine Zeile über der Gewählten Plaziert." + colors.RESET)
+
+        position_line_to_insert = input(colors.PROMPT_COLOR + "An welcher Zeile soll eingefügt werden: " + colors.RESET).strip().lower()
+        
+        if not position_line_to_insert.isdigit(): 
+            print(colors.ERROR_COLOR + "Die Zeile darf nicht leer oder Buchstaben enthalten!" + colors.RESET)
+            continue
+
+        if position_line_to_insert > len(zeilen) + 1 or position_line_to_insert < 1:
+            print(colors.ERROR_COLOR + "Bitte nutze eine Valide Position!" + colors.RESET)
+            continue
+
+        position_line_to_insert = int(position_line_to_insert)
+        content_line_to_insert = input(colors.PROMPT_COLOR + "Was soll in die neue Zeile?: " + colors.RESET)
+
+        if input(colors.PROMPT_COLOR + "Bestätige das einfügen. (y/n)" + colors.RESET).strip().lower() == "y":
+            zeilen.insert(position_line_to_insert + 1, content_line_to_insert)
+            print(colors.SUCCESS_COLOR + "Der Vorgang wurde erfolgreich abgeschlossen." + colors.RESET)
+        else:
+            print(colors.INFO_COLOR + "Der Vorgang wurde abgebrochen." + colors.RESET)
+        continue
 
     zeilen.append(zeile)
