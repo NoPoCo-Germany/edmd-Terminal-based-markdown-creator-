@@ -74,7 +74,9 @@ while True:
                 {colors.COMMAND_COLOR}:pfad{colors.RESET} (setzt den Pfad wo alle md Dateien gespeichert werden sollen)
                     {colors.INFO_COLOR}->{colors.RESET} Es muss sich um einen Ordner handeln
                 {colors.COMMAND_COLOR}:show{colors.RESET} (zeigt die aktuelle Datei)
-                {colors.COMMAND_COLOR}:warnings{colors.RESET} (stellt Fehlermeldungen aus oder an)''')
+                {colors.COMMAND_COLOR}:warnings{colors.RESET} (stellt Fehlermeldungen aus oder an)
+                {colors.COMMAND_COLOR}:insert{colors.RESET} (fügt eine Zeile ein)
+                {colors.COMMAND_COLOR}:search{colors.RESET} (sucht nach einem Wort)''')
         continue
 
     if zeile == ":save":
@@ -282,5 +284,31 @@ while True:
         else:
             print(colors.INFO_COLOR + "Der Vorgang wurde abgebrochen." + colors.RESET)
         continue
+
+    if zeile == ":search":
+        which_line_to_search = input(colors.PROMPT_COLOR + "Was soll gesucht werden?: " + colors.RESET).strip()
+        if which_line_to_search == "":
+            print(colors.ERROR_COLOR + "Die Zeile darf nicht leer sein!" + colors.RESET)
+            continue
+
+        position_of_searched_word = []
+        counter_search = 0
+        while counter_search < len(zeilen):
+            if which_line_to_search.lower() in zeilen[counter_search].lower():
+                position_of_searched_word.append(counter_search + 1)
+            counter_search += 1
+
+        if position_of_searched_word == []:
+            print(colors.INFO_COLOR +
+                "Der Suchbegriff wurde nicht gefunden." +
+                colors.RESET)
+        else:
+            print(colors.SUCCESS_COLOR +
+                "Gefunden in den Zeilen: " +
+                str(position_of_searched_word) +
+                colors.RESET)
+        continue
+
+        
 
     zeilen.append(zeile)
