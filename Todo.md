@@ -1,17 +1,21 @@
 # EDMD Roadmap
 
-## Als Nächstes
-- [x] :show fertigstellen
-- [x] Fehler bei :open abfangen
-- [x] :insert hinzufügen
+## Finished
+- [x] Complete :show
+- [x] Handle errors with :open
+- [x] Add :insert
+- [x] Search
 
-## Später
-- [x] Suchen
-- [ ] Tests schreiben
-- [ ] curses lernen
-- [ ] Vollbildmodus mit Pfeiltasten
-- [ ] Markdown-Vorschau
+## Right now
+- [ ] Switching themes
 
-## Optional
-- [ ] Ungespeicherte Änderungen erkennen
-- [ ] Undo und Redo
+## After this one
+- [ ] Write tests
+- [ ] Learn curses
+- [ ] Full-screen mode with arrow keys
+- [ ] Markdown preview
+
+## Maybe...
+- [ ] Detect unsaved changes
+- [ ] Undo and Redo
+
