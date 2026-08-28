@@ -5,12 +5,12 @@
 - [x] Handle errors with :open
 - [x] Add :insert
 - [x] Search
+- [x] Switching themes
 
 ## Right now
-- [ ] Switching themes
+- [ ] Write tests
 
 ## After this one
-- [ ] Write tests
 - [ ] Learn curses
 - [ ] Full-screen mode with arrow keys
 - [ ] Markdown preview
