@@ -6,6 +6,7 @@ import json
 import colors
 from prompt_toolkit import prompt
 from prompt_toolkit.formatted_text import ANSI
+from prompt_toolkit.shortcuts import radiolist_dialog
 
 theme = "default"
 colors.set_theme(theme)
@@ -299,7 +300,7 @@ while True:
             counter_search += 1
 
         if position_of_searched_word == []:
-            print(colors.INFO_COLOR +
+            print(colors.ERROR_COLOR +
                 "Der Suchbegriff wurde nicht gefunden." +
                 colors.RESET)
         else:
@@ -308,6 +309,36 @@ while True:
                 str(position_of_searched_word) +
                 colors.RESET)
         continue
+
+    if zeile == ":themes":
+        selected_theme = radiolist_dialog(
+            title="Theme",
+            text=ANSI(
+                colors.INFO_COLOR +
+                "Wähle ein Theme:" +
+                colors.RESET
+            ),
+            values=[
+                (
+                    "default",
+                    ANSI(colors.PROMPT_COLOR + "Default" + colors.RESET)
+                ),
+                (
+                    "tokyo-night",
+                    ANSI(colors.PROMPT_COLOR + "Tokyo Night" + colors.RESET)
+                )
+            ]
+        ).run()
+
+        if selected_theme is not None:
+            theme = selected_theme
+            colors.set_theme(theme)
+            print(colors.SUCCESS_COLOR + "Theme wurde geändert." + colors.RESET)
+        else:
+            print(colors.ERROR_COLOR + "Vorgang abgebrochen!" + colors.RESET)
+
+        continue
+
 
         
 
