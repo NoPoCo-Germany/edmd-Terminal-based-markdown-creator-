@@ -8,9 +8,6 @@ from prompt_toolkit import prompt
 from prompt_toolkit.formatted_text import ANSI
 from prompt_toolkit.shortcuts import radiolist_dialog
 
-theme = "default"
-colors.set_theme(theme)
-
 zeilen = []
 zeilen_for_open = []
 columns = shutil.get_terminal_size().columns
@@ -19,6 +16,43 @@ columns = shutil.get_terminal_size().columns
 def restart():
     import sys
     os.execv(sys.executable, [sys.executable] + sys.argv)
+
+warning_status = 0  # 0 für Wahrnungen anzeigen, 1 für nicht anzeigen
+if warning_status == 1:
+    print(colors.WARNING_COLOR + "Warnungen sind ausgestellt." + colors.RESET)
+
+programm_ordner = os.path.dirname(os.path.realpath(__file__))
+config_datei = os.path.join(programm_ordner, "data.json")
+
+try:
+    with open(config_datei, 'r', encoding="utf-8") as f:
+        data = json.load(f)
+
+except FileNotFoundError:
+    if warning_status == 0:
+        print(colors.WARNING_COLOR +
+              "Kein Pfad gefunden, normaler Pfad wird genutzt." + colors.RESET)
+    data = {
+        "pfad": programm_ordner,
+        "theme": "default"
+    }
+
+except json.JSONDecodeError:
+    if warning_status == 0:
+        print(colors.ERROR_COLOR +
+              "Fehlerhafter Pfad in JSon-Datei, normaler Pfad wird genutzt." + colors.RESET)
+    data = {
+        "pfad": programm_ordner,
+        "theme": "default"
+    }
+
+with open(config_datei, "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=4)
+
+pfad = data.get("pfad", programm_ordner)
+theme = data.get("theme", "default")
+
+colors.set_theme(theme)
 
 
 Logo = r'''
@@ -36,27 +70,6 @@ for line in Logo.splitlines():
 time.sleep(0.5)
 
 print(colors.INFO_COLOR + "[Use :help to see all commands]" + colors.RESET)
-
-warning_status = 0  # 0 für Wahrnungen anzeigen, 1 für nicht anzeigen
-if warning_status == 1:
-    print(colors.WARNING_COLOR + "Warnungen sind ausgestellt." + colors.RESET)
-
-programm_ordner = os.path.dirname(os.path.abspath(__file__))
-config_datei = os.path.join(programm_ordner, "data.json")
-
-try:
-    with open(config_datei, 'r', encoding="utf-8") as f:
-        pfad = json.load(f)
-except FileNotFoundError:
-    if warning_status == 0:
-        print(colors.WARNING_COLOR +
-              "Kein Pfad gefunden, normaler Pfad wird genutzt." + colors.RESET)
-    pfad = programm_ordner
-except json.JSONDecodeError:
-    if warning_status == 0:
-        print(colors.ERROR_COLOR +
-              "Fehlerhafter Pfad in JSon-Datei, normaler Pfad wird genutzt." + colors.RESET)
-    pfad = programm_ordner
 
 
 while True:
@@ -77,7 +90,8 @@ while True:
                 {colors.COMMAND_COLOR}:show{colors.RESET} (zeigt die aktuelle Datei)
                 {colors.COMMAND_COLOR}:warnings{colors.RESET} (stellt Fehlermeldungen aus oder an)
                 {colors.COMMAND_COLOR}:insert{colors.RESET} (fügt eine Zeile ein)
-                {colors.COMMAND_COLOR}:search{colors.RESET} (sucht nach einem Wort)''')
+                {colors.COMMAND_COLOR}:search{colors.RESET} (sucht nach einem Wort)
+                {colors.COMMAND_COLOR}:themes{colors.RESET} (ein Menü um das Theme zu ändern)''')
         continue
 
     if zeile == ":save":
@@ -234,15 +248,19 @@ while True:
         continue
 
     if zeile == ":pfad":
-        pfad = input(colors.PROMPT_COLOR + "Pfad eingeben:" + colors.RESET)
+        new_path = input(colors.PROMPT_COLOR + "Pfad eingeben:" + colors.RESET).strip()
 
-        if (pfad.startswith("'") and pfad.endswith("'")) or (
-                pfad.startswith('"') and pfad.endswith('"')):
-            pfad = pfad[1:-1]
+        if (new_path.startswith("'") and new_path.endswith("'")) or (
+                new_path.startswith('"') and new_path.endswith('"')):
+            new_path = new_path[1:-1]
 
-        if os.path.isdir(pfad):
+        if os.path.isdir(new_path):
+
+            pfad = new_path
+            data["pfad"] = pfad
+
             with open(config_datei, 'w', encoding="utf-8") as f:
-                json.dump(pfad, f)
+                json.dump(data, f, indent=4)
             print(colors.SUCCESS_COLOR + "Pfad wurde übernommen" + colors.RESET)
             continue
         else:
@@ -254,7 +272,6 @@ while True:
     if zeile == ":warnings":
         if warning_status == 0:
             print(colors.WARNING_COLOR + "Selten empfohlen!" + colors.RESET)
-            continue
 
         if input(colors.WARNING_COLOR + "Möchten sie Fehlermeldungen, für diese Sitzung, ausstellen? (y/n)" + colors.RESET).strip().lower() == "y":
             warning_status = 1
@@ -264,7 +281,7 @@ while True:
 
     if zeile == ":insert":
         if warning_status == 0:
-            print(colors.WARNING_COLOR + "Die Zeile wird eine Zeile über der Gewählten Plaziert." + colors.RESET)
+            print(colors.WARNING_COLOR + "Die Zeile wird eine Zeile unter der Gewählten Plaziert." + colors.RESET)
 
         position_line_to_insert = input(colors.PROMPT_COLOR + "An welcher Zeile soll eingefügt werden: " + colors.RESET).strip().lower()
         
@@ -272,15 +289,16 @@ while True:
             print(colors.ERROR_COLOR + "Die Zeile darf nicht leer oder Buchstaben enthalten!" + colors.RESET)
             continue
 
-        if position_line_to_insert > len(zeilen) + 1 or position_line_to_insert < 1:
+        position_line_to_insert = int(position_line_to_insert)
+
+        if position_line_to_insert > len(zeilen) or position_line_to_insert < 1:
             print(colors.ERROR_COLOR + "Bitte nutze eine Valide Position!" + colors.RESET)
             continue
 
-        position_line_to_insert = int(position_line_to_insert)
         content_line_to_insert = input(colors.PROMPT_COLOR + "Was soll in die neue Zeile?: " + colors.RESET)
 
         if input(colors.PROMPT_COLOR + "Bestätige das einfügen. (y/n)" + colors.RESET).strip().lower() == "y":
-            zeilen.insert(position_line_to_insert + 1, content_line_to_insert)
+            zeilen.insert(position_line_to_insert , content_line_to_insert)
             print(colors.SUCCESS_COLOR + "Der Vorgang wurde erfolgreich abgeschlossen." + colors.RESET)
         else:
             print(colors.INFO_COLOR + "Der Vorgang wurde abgebrochen." + colors.RESET)
@@ -333,6 +351,9 @@ while True:
         if selected_theme is not None:
             theme = selected_theme
             colors.set_theme(theme)
+            data["theme"] = theme
+            with open(config_datei, 'w', encoding="utf-8") as f:
+                json.dump(data, f, indent=4)
             print(colors.SUCCESS_COLOR + "Theme wurde geändert." + colors.RESET)
         else:
             print(colors.ERROR_COLOR + "Vorgang abgebrochen!" + colors.RESET)
